@@ -1,26 +1,47 @@
-
+// lib/main.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'screens/cliente/cliente_list.dart';
+import 'package:provider/provider.dart';
+import 'package:transcolar_frontend/core/services/clock_services.dart';
+import 'package:transcolar_frontend/core/services/user_services.dart';
+import 'package:transcolar_frontend/core/theme/colors.dart';
+import 'package:transcolar_frontend/features/auth/presentation/providers/auth_provider.dart';
+import 'package:transcolar_frontend/features/auth/presentation/screens/login_screen.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
-  runApp(const MyApp());
+void main() {
+  runApp(const TranscolarApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class TranscolarApp extends StatelessWidget {
+  const TranscolarApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Transcolar',
-      theme: ThemeData(
-        primarySwatch: Colors.brown,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UserService()),
+        ChangeNotifierProvider(create: (_) => ClockService()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()), // Adicionado
+      ],
+      child: MaterialApp(
+        title: 'Transcolar - Transporte Escolar',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primaryColor: AppColors.amareloMel,
+          colorScheme: ColorScheme.dark(
+            primary: AppColors.amareloMel,
+            secondary: AppColors.amareloMelEscuro,
+            error: AppColors.erro,
+            surface: AppColors.fundoCard,
+            background: AppColors.pretoPrincipal,
+          ),
+          fontFamily: 'Roboto',
+          appBarTheme: const AppBarTheme(
+            elevation: 0,
+            centerTitle: true,
+          ),
+        ),
+        home: const LoginScreen(), // Mudar para LoginScreen
       ),
-      home: const ClienteListScreen(),
     );
   }
 }
